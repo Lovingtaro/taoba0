@@ -22,11 +22,13 @@
                         <a>退出</a>
                         <strong>|</strong>
                     </span>
-                    <a href="" class="">
+                    <router-link :to="'/shopcart'">
                         <i class="iconfont icon-cart"></i>购物车(
                         <span id="shoppingCartCount">
-                            <span>4</span>
-                        </span>)</a>
+                            <span>{{$store.getters.totalCount}}</span>
+                        </span>)
+
+                    </router-link>
                 </div>
             </div>
         </div>
@@ -123,6 +125,10 @@
 <script>
 export default {
   name: 'app',
+    created() {
+    console.log(this.$store.state.count);
+  }
+  
 }
 </script>
 

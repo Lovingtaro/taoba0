@@ -13,7 +13,12 @@
                 <div class="wrap-box">
                     <div class="left-925">
                         <div class="goods-box clearfix">
-                            <div class="pic-box"></div>
+                            <div class="pic-box">
+                                <ProductZoomer v-if="this.images.normal_size.length!=0"
+  :base-images="images"
+  :base-zoomer-options="zoomerOptions"
+/>
+                            </div>
                             <div class="goods-spec" >
                                 <h1>{{goodsinfo.title}}</h1>
                                 <p class="subtitle">{{goodsinfo.sub_title}}</p>
@@ -51,8 +56,8 @@
                                     <dl>
                                         <dd>
                                             <div id="buyButton" class="btn-buy">
-                                                <button onclick="cartAdd(this,'/',1,'/shopping.html');" class="buy">立即购买</button>
-                                                <button onclick="cartAdd(this,'/',0,'/cart.html');" class="add">加入购物车</button>
+                                                <button  class="buy">立即购买</button>
+                                                <button  class="add" @click="add2cart">加入购物车</button>
                                             </div>
                                         </dd>
                                     </dl>
@@ -83,7 +88,7 @@
                                         </div>
                                         <div class="conn-box">
                                             <div class="editor">
-                                                <textarea v-model.trim="message" @keyup.enter="addComments" id="txtContent" name="txtContent" sucmsg=" " datatype="*10-1000" nullmsg="请填写评论内容！"></textarea>
+                                                <textarea v-model.trim="message" @keyup.enter.prevent="addComments" id="txtContent" name="txtContent" sucmsg=" " datatype="*10-1000" nullmsg="请填写评论内容！"></textarea>
                                                 <span class="Validform_checktip"></span>
                                             </div>
                                             <div class="subcon">
@@ -168,7 +173,19 @@
             pageSize:6,
             comments:[] ,
             messages:[],
-            message:""
+            message:"",
+            images:{
+              'normal_size':[]
+            },
+           zoomerOptions: {
+            'zoomFactor': 4,
+            'pane': 'pane',
+            'hoverDelay': 300,
+            'namespace': 'zoomer',
+            'move_by_click':false,
+            'scroll_items': 7,
+            'choosed_thumb_border_color': "#dd2c00"
+            }
             }
         },
         methods:{
@@ -180,6 +197,14 @@
                 this.goodsinfo=result.data.message.goodsinfo
                 this.hotgoodslist=result.data.message.hotgoodslist
                 this.imglist=result.data.message.imglist
+                // 设置给放大镜的个数
+                this.images.normal_size=[];
+                this.imglist.forEach(ele=> {
+                   this.images.normal_size.push({
+                       id:ele.id,
+                       url:ele.original_path
+                   }) 
+                });
             });
                 this.getComments();
             },
@@ -201,10 +226,10 @@
                 this.pageSize=pageSize;
                 this.getComments();
             },
-            addComments(e){
+            addComments(){
                  //事件对象的keyCode属性获取按键
 
-                e.preventDefault();
+                // e.preventDefault();
                 if(this.message==""){
                    this.$Message.warning('请输入搜索内容哦！');
                     return;
@@ -217,7 +242,15 @@
                 this.message="";
                 this.$Message.success('评论成功！');
             });
-            }    
+            },
+            add2cart(){
+                // 获取商品Id,获取商品名称
+                // 提交载荷
+                this.$store.commit('add2cart',{
+                    goodId:this.artID,
+                    goodNum:this.buyCount
+                })
+            }   
         },   
         created() {
         // console.log(this.$route.params);
@@ -228,6 +261,7 @@
            // 如果 `question` 发生改变，这个函数就会运行
     $route(newQ, oldQ) {
         this.initData();
+        this.images.normal_size=[];
     }
     }
    } 
@@ -237,5 +271,16 @@
      display:block;
      max-width:900px;
  }
-    
+ .preview-box,
+ .thumb-list{
+     width:395px;
+ } 
+ .responsive-image{
+     width: 30px;
+     height: 30px;
+ }
+ .responsive-image img{
+     width: 185px;
+    height: 185px;
+ }
 </style>
