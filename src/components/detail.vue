@@ -190,6 +190,8 @@
         },
         methods:{
             initData(){
+                // 初始化购买个数为1
+                this.buyCount=1;
             this.artID = this.$route.params.artID; 
             this.$axios.get(`http://111.230.232.110:8899/site/goods/getgoodsinfo/${this.artID}`)
             .then(result=>{
@@ -211,7 +213,7 @@
             getComments(){
                 this.$axios.get(`http://111.230.232.110:8899/site/comment/getbypage/goods/${this.artID
                 }?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`).then(result=>{
-                    console.log(result)
+                    // console.log(result)
                     this.messages=result.data.message
                     this.totalcount=result.data.totalcount
                 })
@@ -260,8 +262,8 @@
     watch:{
            // 如果 `question` 发生改变，这个函数就会运行
     $route(newQ, oldQ) {
-        this.initData();
         this.images.normal_size=[];
+        this.initData();
     }
     }
    } 
@@ -282,5 +284,9 @@
  .responsive-image img{
      width: 185px;
     height: 185px;
+ }
+ .thumb-list img{
+     width: 185px;
+     height: 185px;
  }
 </style>
